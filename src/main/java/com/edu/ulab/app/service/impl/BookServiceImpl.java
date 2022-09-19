@@ -56,6 +56,6 @@ public class BookServiceImpl implements BookService {
         if (Objects.isNull(id)){
             throw new NotFoundException("Long is null");
         }
-        storage.deleteBook(id);
+        storage.deleteBooks(id);
     }
 }
