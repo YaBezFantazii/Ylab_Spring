@@ -17,7 +17,6 @@ public class Storage {
     public User newUser (User user){
         user.setId(autoIncUser);
         userStorage.put(autoIncUser, user);
-        bookStorage.put(autoIncUser,new Book());
         autoIncUser++;
         return user;
     }
