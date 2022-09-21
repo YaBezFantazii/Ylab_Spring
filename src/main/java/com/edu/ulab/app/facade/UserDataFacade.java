@@ -81,6 +81,7 @@ public class UserDataFacade {
         log.info("Mapped user request: {}", userDto);
         UserDto updatedUser = userService.updateUser(userDto);
         log.info("Updated user: {}", updatedUser);
+        System.out.println(updatedUser.getId());
         List<BookDto> bookList = userBookRequestUpdate.getBookRequests()
                 .stream()
                 .filter(Objects::nonNull)
