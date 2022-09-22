@@ -16,9 +16,9 @@ import java.util.Objects;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
-    private final Storage<User> storage;
+    private final Storage storage;
 @Autowired
-    public UserServiceImpl(UserMapper userMapper, Storage<User> storage) {
+    public UserServiceImpl(UserMapper userMapper, Storage storage) {
         this.userMapper = userMapper;
         this.storage = storage;
     }
@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("UserDto is null");
         }
         User user = userMapper.userDtoToUser(userDto);
-        return userMapper.userToUserDto(storage.newEntity(user));
+        return userMapper.userToUserDto(storage.newUser(user));
     }
 
     @Override
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("UserDto is null");
         }
         User user = userMapper.userDtoToUser(userDto);
-        return userMapper.userToUserDto(storage.updateEntity(user));
+        return userMapper.userToUserDto(storage.updateUser(user));
     }
 
     @Override
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
         if (Objects.isNull(id)){
             throw new NotFoundException("Long is null");
         }
-        User user = storage.getEntity(id);
+        User user = storage.getUser(id);
         return userMapper.userToUserDto(user);
     }
 
@@ -55,6 +55,6 @@ public class UserServiceImpl implements UserService {
         if (Objects.isNull(id)){
             throw new NotFoundException("Long is null");
         }
-        storage.deleteEntity(id);
+        storage.deleteUser(id);
     }
 }

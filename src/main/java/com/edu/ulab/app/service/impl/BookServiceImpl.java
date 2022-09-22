@@ -16,11 +16,11 @@ import java.util.Objects;
 @Slf4j
 @Service
 public class BookServiceImpl implements BookService {
-    private final Storage<Book> storage;
+    private final Storage storage;
 
     private final BookMapper bookMapper;
 @Autowired
-    public BookServiceImpl( BookMapper bookMapper, Storage<Book> storage) {
+    public BookServiceImpl( BookMapper bookMapper, Storage storage) {
         this.storage = storage;
         this.bookMapper = bookMapper;
     }
@@ -31,7 +31,7 @@ public class BookServiceImpl implements BookService {
             throw new NotFoundException("BookDto is null");
         }
         Book book = bookMapper.bookDtoToBook(bookDto);
-        return bookMapper.bookToBookDto(storage.newEntity(book));
+        return bookMapper.bookToBookDto(storage.newBook(book));
     }
 
     @Override
@@ -40,7 +40,7 @@ public class BookServiceImpl implements BookService {
             throw new NotFoundException("BookDto is null");
         }
         Book book = bookMapper.bookDtoToBook(bookDto);
-        return bookMapper.bookToBookDto(storage.updateEntity(book));
+        return bookMapper.bookToBookDto(storage.updateBook(book));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class BookServiceImpl implements BookService {
         if (Objects.isNull(id)){
             throw new NotFoundException("Long is null");
         }
-        return storage.getListEntity(id).stream().map(bookMapper::bookToBookDto).toList();
+        return storage.getListBook(id).stream().map(bookMapper::bookToBookDto).toList();
     }
 
     @Override
@@ -56,7 +56,6 @@ public class BookServiceImpl implements BookService {
         if (Objects.isNull(id)){
             throw new NotFoundException("Long is null");
         }
-        //storage.deleteBooks(id);
-        storage.deleteEntity(id);
+        storage.deleteBook(id);
     }
 }

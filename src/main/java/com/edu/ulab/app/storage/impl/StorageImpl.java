@@ -1,17 +1,30 @@
 package com.edu.ulab.app.storage.impl;
 
 import com.edu.ulab.app.entity.Book;
+import com.edu.ulab.app.entity.User;
+import com.edu.ulab.app.exception.NotFoundException;
 import com.edu.ulab.app.storage.Storage;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
-public class StorageBookImpl implements Storage <Book> {
+public class StorageImpl implements Storage  {
     private static long autoIncBook = 1;
+    private static long autoIncUser = 1;
     private final Map<Long, Book> bookStorage = new HashMap<>();
+    private final Map<Long, User> userStorage = new HashMap<>();
+
     @Override
-    public Book newEntity(Book book){
+    public User newUser(User user){
+        user.setId(autoIncUser);
+        userStorage.put(autoIncUser, user);
+        autoIncUser++;
+        return user;
+    }
+
+    @Override
+    public Book newBook(Book book){
         // Проверка, есть ли уже такое id в хранилище
         while (Objects.nonNull(bookStorage.get(autoIncBook))){
             autoIncBook++;
@@ -21,8 +34,23 @@ public class StorageBookImpl implements Storage <Book> {
         autoIncBook++;
         return book;
     }
+
     @Override
-    public Book updateEntity (Book book) {
+    public User updateUser (User user){
+        if (user.getId()==null){
+            return newUser(user);
+        }
+        if (userStorage.get(user.getId())==null){
+            throw new NotFoundException("User not created");
+        }
+        // Полностью заменяем пользователя
+        userStorage.remove(user.getId());
+        userStorage.put(user.getId(),user);
+        return user;
+    }
+
+    @Override
+    public Book updateBook (Book book) {
         if (book.getId() == 0) {
             while (Objects.nonNull(bookStorage.get(autoIncBook))){
                 autoIncBook++;
@@ -56,12 +84,15 @@ public class StorageBookImpl implements Storage <Book> {
     }
 
     @Override
-    public Book getEntity(Long id) {
-        return null;
+    public User getUser (Long id){
+        if (Objects.isNull(userStorage.get(id))){
+            throw new NotFoundException("User not created");
+        }
+        return userStorage.get(id);
     }
 
     @Override
-    public List<Book> getListEntity (Long id) {
+    public List<Book> getListBook (Long id) {
         return bookStorage.entrySet()
                 .stream()
                 .filter(Objects::nonNull)
@@ -70,7 +101,11 @@ public class StorageBookImpl implements Storage <Book> {
                 .toList();
     }
     @Override
-    public void deleteEntity (Long id) {
+    public void deleteUser (Long id){
+        userStorage.remove(id);
+    }
+    @Override
+    public void deleteBook (Long id) {
         bookStorage.entrySet().removeIf(s-> Objects.equals(s.getValue().getUserId(), id));
     }
 }
